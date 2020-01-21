@@ -6,32 +6,50 @@ using System.Collections.Generic;
 namespace Graphsky {
     class Graph {
         // List of all graph nodes, sorted by Id
-        private Node[] nodes;
+        public Node[] nodes { get; private set; }
 
         // First index equals node from which arrow points
         // Second index equals node where arrow points
-        private readonly bool[,] edges;
+        public readonly bool[,] edges;
+
+        private int? width;
+        private int? height;
+
 
         public Graph(Node[] nodes_, int[][] adj_mat) {
             nodes = nodes_;
             Array.Sort(nodes, delegate (Node a, Node b) {
-                return a.getId().CompareTo(b.getId());
+                return a.id.CompareTo(b.id);
             });
 
             edges = new bool[nodes.Length, nodes.Length];
 
             foreach (int[] pair in adj_mat) {
                 int idx_from = Array.FindIndex(nodes, delegate (Node a) {
-                    return a.getId() == pair[0];
+                    return a.id == pair[0];
                 });
 
                 int idx_to = Array.FindIndex(nodes, delegate (Node a) {
-                    return a.getId() == pair[1];
+                    return a.id == pair[1];
                 });
 
                 edges[idx_from, idx_to] = true;
             }
         }
+
+
+        /**
+         *  Returns the extent of the graph
+         *  - width -> number of horizontal nodes
+         *  - height -> number of vertical nodes
+         *  
+         *  @return             tuple containing width and height in that order
+         */
+        public Tuple<int, int> getExtent() {
+            return new Tuple<int, int>((int)width, (int)height);
+        }
+
+
 
         /**
          *  Calculates uniforma coordinates for the given nodes
@@ -53,17 +71,22 @@ namespace Graphsky {
                 return false;
             }
 
-            int width = 1;
-            int height = getMaxParallelNodes(ref width, (int)idx_first);
+            int wid = 1;
+            height = getMaxParallelNodes(ref wid, (int)idx_first);
+            width = wid;
 
             int x = 2;
             int[] indizes = getFollowingNodes((int)idx_first);
             int len = indizes.Length;
             while (len != 0) {
+                // TODO: add support for straight/ odd length
                 int y = (int) -Math.Floor((double)len / 2);
                 foreach (int idx in indizes) {
                     nodes[idx].setPosition(x, y++);
                 }
+
+                indizes = getFollowingNodes(indizes);
+                len = indizes.Length;
                 x++;
             }
 
