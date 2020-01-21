@@ -10,6 +10,8 @@ namespace Graphsky {
 
         public Node(int id_) {
             id = id_;
+            x = null;
+            y = null;
         }
 
         public int getId() {

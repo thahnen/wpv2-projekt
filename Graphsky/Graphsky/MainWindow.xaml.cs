@@ -7,6 +7,7 @@ namespace Graphsky {
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
+        private Graph graph;
         public MainWindow() {
             InitializeComponent();
         }
@@ -23,9 +24,35 @@ namespace Graphsky {
             OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == true) {
                 path = dialog.FileName;
-            }
 
-            btnCalcGraph.IsEnabled = true;
+                if (JSONHandler.loadFromFile(path, ref graph)) {
+                    // Show message box that file was loaded correctly!
+                    MessageBox.Show(
+                        $"File {path} loaded!",
+                        "File loaded",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+
+                    // Only enable button if loading was successfull!
+                    btnCalcGraph.IsEnabled = true;
+                    return;
+                }
+
+                // Show message box that loading file failed!
+                MessageBox.Show(
+                    $"File {path} could not be loaded!",
+                    "Loading failed",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error,
+                    MessageBoxResult.OK,
+                    MessageBoxOptions.ServiceNotification
+                );
+
+                // Disable all other buttons if failed
+                btnCalcGraph.IsEnabled = false;
+                btnSaveGraph.IsEnabled = false;
+            }
         }
 
         /**

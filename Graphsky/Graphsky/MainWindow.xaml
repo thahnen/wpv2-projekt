@@ -10,7 +10,6 @@
         <Button x:Name="btnLoadGraph" Content="Load Graph" HorizontalAlignment="Left" Margin="25,25,0,0" VerticalAlignment="Top" Width="75" Click="loadGraphFromFile"/>
         <Button x:Name="btnCalcGraph" Content="Calculate Graph" HorizontalAlignment="Left" Margin="125,25,0,0" VerticalAlignment="Top" Width="100" Click="calculateGraphLayout" IsEnabled="False"/>
         <Button x:Name="btnSaveGraph" Content="Save Graph" HorizontalAlignment="Left" Margin="250,25,0,0" VerticalAlignment="Top" Width="75" Click="saveGraphToFile" IsEnabled="False"/>
-        <Canvas x:Name="cvsWhiteboard" Margin="25,75,25,25"/>
-
+        <Canvas x:Name="cvsWhiteboard" Margin="25,75,25,25" Background="Gray"/>
     </Grid>
 </Window>
