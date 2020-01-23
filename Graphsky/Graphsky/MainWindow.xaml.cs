@@ -1,6 +1,7 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System;
+using System.Windows;
 using System.Windows.Shapes;
+using System.Windows.Controls;
 using Microsoft.Win32;
 
 
@@ -27,6 +28,9 @@ namespace Graphsky {
                 path = dialog.FileName;
 
                 if (JSONHandler.loadFromFile(path, ref graph)) {
+                    // Clear canvas
+                    cvsWhiteboard.Children.Clear();
+
                     // Show message box that file was loaded correctly!
                     MessageBox.Show(
                         $"File {path} loaded!",
@@ -73,26 +77,18 @@ namespace Graphsky {
                     MessageBoxImage.Information
                 );
 
-                // Paint graph to canvas -> add to another function!
-                int width = (int) cvsWhiteboard.ActualWidth;
-                int height = (int)cvsWhiteboard.ActualHeight;
+                Tuple<int, int> g_size = graph.getExtent();
+                Tuple<int, int> c_size = new Tuple<int, int>(
+                    (int) cvsWhiteboard.ActualWidth,
+                    (int) cvsWhiteboard.ActualHeight
+                );
 
-                int gwidth, gheight;
-                graph.getExtent().Unpack(out gwidth, out gheight);
-
-                int steps_width = width / (gwidth + 2);
-                int steps_height = height / (gheight + 2);
-
-                foreach (Node n in graph.nodes) {
-                    Ellipse el = new Ellipse();
-                    el.Stroke = System.Windows.Media.Brushes.Black;
-                    el.Fill = System.Windows.Media.Brushes.Black;
-                    el.Width = height / 10;
-                    el.Height = height / 10;
-                    cvsWhiteboard.Children.Add(el);
-                    Canvas.SetLeft(el, n.getPosition().Item1 * steps_width);
-                    Canvas.SetTop(el, height / 2 + n.getPosition().Item2 * steps_height);
-                }
+                // Clear canvas
+                cvsWhiteboard.Children.Clear();
+                // Draw nodes
+                drawNodes(graph.nodes, ref g_size, ref c_size);
+                // Draw edges (including arrow to first, from last to end)
+                drawEdges(graph.nodes, graph.edges, ref g_size, ref c_size);
 
                 // Enable button only if calculation was successfull!
                 btnSaveGraph.IsEnabled = true;
@@ -119,6 +115,84 @@ namespace Graphsky {
          */
         private void saveGraphToFile(object sender, RoutedEventArgs e) {
             //
+        }
+
+
+        /**
+         * 
+         */
+        private void onWindowResize(object sender, RoutedEventArgs e) {
+            //
+        }
+
+
+        /**
+         *  Draws all nodes using the graph width + height to calculate the exact position
+         *  
+         *  @param nodes        list of graph nodes
+         *  @param g_size       size of the graph (in nodes)
+         *  @param c_size       size of the canvas (in pixel)
+         */
+        private void drawNodes(Node[] nodes, ref Tuple<int, int> g_size, ref Tuple<int, int> c_size) {
+            int step_x = c_size.Item1 / g_size.Item1;
+            int step_y = c_size.Item2 / (g_size.Item2 + 2);
+
+            foreach (Node n in nodes) {
+                int x, y;
+                n.getPosition().Unpack(out x, out y);
+
+                Ellipse e = new Ellipse {
+                    Stroke = System.Windows.Media.Brushes.Black,
+                    Fill = System.Windows.Media.Brushes.Black,
+                    Width = 10,
+                    Height = 10
+                };
+
+                int offset_width = (int) (e.Width * 0.5);
+                int offset_height = (int) (e.Height * 0.5);
+
+                cvsWhiteboard.Children.Add(e);
+                Canvas.SetLeft(e, (x-0.5) * step_x - offset_width);
+                Canvas.SetTop(e, c_size.Item2 / 2 + y * step_y - offset_height);
+            }
+        }
+
+
+        /**
+         *  Draws all edges from given adjacency matrix
+         *  
+         *  @param nodes        list of nodes, necessary for edge coordinates
+         *  @param adjacency    the adjacency matrix for the edges
+         *  @param g_size       size of the graph (in nodes)
+         *  @param c_size       size of the canvas (in pixel)
+         */
+        private void drawEdges(Node[] nodes, bool[,] adjacency, ref Tuple<int, int> g_size,
+                                ref Tuple<int, int> c_size) {
+            int step_x = c_size.Item1 / g_size.Item1;
+            int step_y = c_size.Item2 / (g_size.Item2 + 2);
+
+            for (int i = 0; i < adjacency.GetLength(0); i++) {
+                int x1, y1;
+                nodes[i].getPosition().Unpack(out x1, out y1);
+
+                for (int j = 0; j < adjacency.GetLength(1); j++) {
+                    if (adjacency[i, j]) {
+                        int x2, y2;
+                        nodes[j].getPosition().Unpack(out x2, out y2);
+
+                        Line l = new Line {
+                            Stroke = System.Windows.Media.Brushes.Black,
+                            StrokeThickness = 2,
+                            X1 = (x1-0.5) * step_x,
+                            Y1 = y1 * step_y + c_size.Item2 / 2,
+                            X2 = (x2-0.5) * step_x,
+                            Y2 = y2 * step_y + c_size.Item2 / 2
+                        };
+
+                        cvsWhiteboard.Children.Add(l);
+                    }
+                }
+            }
         }
     }
 }

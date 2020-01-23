@@ -7,6 +7,8 @@ namespace Graphsky {
     class Graph {
         // List of all graph nodes, sorted by Id
         public Node[] nodes { get; private set; }
+        public Node first { get; private set; }
+        public Node last { get; private set; }
 
         // First index equals node from which arrow points
         // Second index equals node where arrow points
@@ -55,6 +57,8 @@ namespace Graphsky {
          *  Calculates uniforma coordinates for the given nodes
          *  
          *  @return             true, if there was no problem with the given nodes
+         *  
+         *  TODO: uniform coordinates not correct!
          */
         public bool calculateUniformCoordinates() {
             // find entry node (the one nobody points to)
@@ -63,13 +67,16 @@ namespace Graphsky {
                 return false;
             }
 
-            nodes[(int)idx_first].setPosition(1, 0);
+            first = nodes[(int)idx_first];
+            first.setPosition(1, 0);
 
             // find ending node (the one pointing to nobody)
             int? idx_last = getFirstEmptyRow();
             if (!idx_last.HasValue) {
                 return false;
             }
+
+            last = nodes[(int)idx_last];
 
             int wid = 1;
             height = getMaxParallelNodes(ref wid, (int)idx_first);
@@ -174,13 +181,15 @@ namespace Graphsky {
          *  
          *  @param indizes      the current nodes to get the successors from
          *  @return             a list (converted set) of successor indizes
+         *  
+         *  TODO: check if upcoming edge already has a position!
          */
         private int[] getFollowingNodes(params int[] indizes) {
             SortedSet<int> found = new SortedSet<int>();
 
             foreach (int idx in indizes) {
                 for (int to = 0; to < edges.GetLength(0); to++) {
-                    if (edges[idx, to]) {
+                    if (edges[idx, to] && !nodes[to].checkPosition()) {
                         found.Add(to);
                     }
                 }

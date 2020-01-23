@@ -9,3 +9,7 @@ Läd einen pseudo-Graphen aus einer JSON-Datei, fügt den Knoten und Kanten unif
 * C#
 * Windows Presentation Foundation (WPF)
 * [JSON.NET für C#](https://www.newtonsoft.com/json)
+
+## Examples
+
+Kommt noch ^^

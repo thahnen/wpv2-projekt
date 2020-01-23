@@ -29,6 +29,16 @@ namespace Graphsky {
 
 
         /**
+         *  Checks if uniform position is already set
+         *  
+         *  @return             true if position set, false otherwise
+         */
+        public bool checkPosition() {
+            return (x.HasValue & y.HasValue);
+        }
+
+
+        /**
          *  Returns the uniform coordinates of the node
          *  
          *  @return             tuple containing x and y in that order
