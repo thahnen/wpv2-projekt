@@ -4,14 +4,36 @@ using System.Collections.Generic;
 
 
 namespace Graphsky {
-    class Graph {
+    /// Output structure for Graph
+    public struct OGraph {
+        int width;
+        int height;
+
+        ONode[] nodes;
+        bool[,] adjacency;
+
+        public OGraph(ref Graph given) {
+            given.getExtent().Unpack(out this.width, out this.height);
+
+            this.nodes = new ONode[given.nodes.Length];
+            for (int i = 0; i < given.nodes.Length; i++) {
+                this.nodes[i] = new ONode(ref given.nodes[i]);
+            }
+
+            this.adjacency = given.edges;
+        }
+    }
+
+
+    /// Stores information about a given graph
+    public class Graph {
         // List of all graph nodes, sorted by Id
         public Node[] nodes { get; private set; }
         public Node first { get; private set; }
         public Node last { get; private set; }
 
         // First index equals node from which arrow points
-        // Second index equals node where arrow points
+        // Second index equals node where arrow points to
         public readonly bool[,] edges;
 
         private int? width;
@@ -68,7 +90,6 @@ namespace Graphsky {
             }
 
             first = nodes[(int)idx_first];
-            first.setPosition(1, 0);
 
             // find ending node (the one pointing to nobody)
             int? idx_last = getFirstEmptyRow();
@@ -78,23 +99,49 @@ namespace Graphsky {
 
             last = nodes[(int)idx_last];
 
-            int wid = 1;
-            height = getMaxParallelNodes(ref wid, (int)idx_first);
-            width = wid;
+            int idx = 0;
 
-            int x = 2;
-            int[] indizes = getFollowingNodes((int)idx_first);
-            int len = indizes.Length;
-            while (len != 0) {
-                // TODO: add support for straight/ odd length
-                int y = (int) -Math.Floor((double)len / 2);
-                foreach (int idx in indizes) {
-                    nodes[idx].setPosition(x, y++);
+            // Get slices of graph
+            List<SortedSet<int>> slices = new List<SortedSet<int>>();
+            slices.Add(new SortedSet<int>(new int[] { (int)idx_first }));
+
+            do {
+                SortedSet<int> following = getFollowingNodes(slices[idx]);
+                if (following.Count == 0) {
+                    break;
                 }
 
-                indizes = getFollowingNodes(indizes);
-                len = indizes.Length;
-                x++;
+                slices.Add(following);
+                idx++;
+            } while (true);
+
+            // Remove nodes in multiple slices (only keeping the last occuring)
+            do {
+                for (int i = idx-1; i > 0; i--) {
+                    slices[i].ExceptWith(slices[idx]);
+                }
+
+                idx--;
+            } while (idx > 0);
+
+            this.width = slices.Count;
+            this.height = getMaxParallelNodes(slices);
+
+            for (idx = 0; idx < slices.Count; idx++) {
+                // TODO: take a look at straight / odd numbers
+                int y, step_size;
+                if (slices[idx].Count % 2 == 0) {
+                    y = (int) -(slices[idx].Count - 1);
+                    step_size = 2;
+                } else {
+                    y = (int) -Math.Floor((double)slices[idx].Count / 2);
+                    step_size = 1;
+                }
+
+                foreach (int node in slices[idx]) {
+                    nodes[node].setPosition(idx, y);
+                    y += step_size;
+                }
             }
 
             return true;
@@ -160,31 +207,28 @@ namespace Graphsky {
         /**
          *  Gets the maximum number of parallel nodes
          *  
-         *  @param len          the length of the graph
-         *  @param ids          the list of ids to check on their successors
+         *  @param slices       a list of all slices (each slice contains parallel nodes)
          *  @return             the maximum number of parallel nodes
          */
-        private int getMaxParallelNodes(ref int len, params int[] indizes) {
-            int[] found = getFollowingNodes(indizes);
+        private int getMaxParallelNodes(List<SortedSet<int>> slices) {
+            int h = 1;
 
-            int max = indizes.Length;
-            if (found.Length != 0) {
-                max = Math.Max(max, getMaxParallelNodes(ref len, found));
-                len += 1;
+            foreach (var slice in slices) {
+                if (slice.Count > h) {
+                    h = slice.Count;
+                }
             }
 
-            return max;
+            return h;
         }
 
         /**
-         *  Return the indizes of the nodes following the given nodes indizes
+         *  Return the indizes of the nodes following the given node indizes
          *  
          *  @param indizes      the current nodes to get the successors from
-         *  @return             a list (converted set) of successor indizes
-         *  
-         *  TODO: check if upcoming edge already has a position!
+         *  @return             a set of successor indizes
          */
-        private int[] getFollowingNodes(params int[] indizes) {
+        private SortedSet<int> getFollowingNodes(SortedSet<int> indizes) {
             SortedSet<int> found = new SortedSet<int>();
 
             foreach (int idx in indizes) {
@@ -195,7 +239,7 @@ namespace Graphsky {
                 }
             }
 
-            return found.ToArray<int>();
+            return found;
         }
     }
 }

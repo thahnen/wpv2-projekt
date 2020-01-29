@@ -152,8 +152,13 @@ namespace Graphsky {
                 int offset_height = (int) (e.Height * 0.5);
 
                 cvsWhiteboard.Children.Add(e);
-                Canvas.SetLeft(e, (x-0.5) * step_x - offset_width);
-                Canvas.SetTop(e, c_size.Item2 / 2 + y * step_y - offset_height);
+                Canvas.SetLeft(e, step_x / 2            // distance from left, equals y axis
+                                    + x * step_x        // distance from y axis
+                                    - offset_width);    // offset due to ellipse offsets x coordinate by width
+
+                Canvas.SetTop(e, c_size.Item2 / 2       // distance from top, equals x axis
+                                    + y * step_y        // distance from x axis
+                                    - offset_height);   // offset due to ellipse offsets y coordinate by height
             }
         }
 
@@ -183,10 +188,15 @@ namespace Graphsky {
                         Line l = new Line {
                             Stroke = System.Windows.Media.Brushes.Black,
                             StrokeThickness = 2,
-                            X1 = (x1-0.5) * step_x,
-                            Y1 = y1 * step_y + c_size.Item2 / 2,
-                            X2 = (x2-0.5) * step_x,
-                            Y2 = y2 * step_y + c_size.Item2 / 2
+                            X1 = step_x / 2         // distance from left, equals y axis
+                                + x1 * step_x,      // distance from y axis
+                            Y1 = c_size.Item2 / 2   // distance from top, equals x axis
+                                + y1 * step_y,      // distance from x axis
+
+                            X2 = step_x / 2         // distance from left, equals y axis
+                                + x2 * step_x,      // distance from y axis
+                            Y2 = c_size.Item2 / 2   // distance from top, equals x axis
+                                + y2 * step_y       // distance from x axis
                         };
 
                         cvsWhiteboard.Children.Add(l);

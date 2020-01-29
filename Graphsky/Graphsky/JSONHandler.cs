@@ -7,7 +7,7 @@ namespace Graphsky {
         /**
          *  Loads a graph from a JSON file
          *  
-         *  @param filepath path to the input json file
+         *  @param filepath     path to the input json file
          *  @param input        where to store the loaded graph
          *  @return             true if loading was sucessfull
          */
@@ -28,6 +28,7 @@ namespace Graphsky {
             }
         }
 
+
         /**
          *  Writes a given graph to a JSON file
          *
@@ -44,7 +45,7 @@ namespace Graphsky {
                 JsonSerializer s = new JsonSerializer();
 
                 try {
-                    s.Serialize(writer, output);
+                    s.Serialize(writer, new OGraph(ref output));
                     return true;
                 } catch (JsonException e) {
                     return false;
