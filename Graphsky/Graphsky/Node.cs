@@ -1,19 +1,7 @@
 ﻿using System;
 
+
 namespace Graphsky {
-    /// Output structure for Node
-    public struct ONode {
-        public readonly int id;
-        public readonly int x;
-        public readonly int y;
-
-        public ONode(ref Node given) {
-            this.id = given.id;
-            given.getPosition().Unpack(out this.x, out this.y);
-        }
-    }
-
-
     /// Stores information about a given node
     public class Node {
         public readonly int id;

@@ -37,11 +37,7 @@ namespace Graphsky {
          *  @return             true if saving was sucessfull
          */
         public static bool saveGraphToFile(string filepath, ref Graph output) {
-            if (!File.Exists(filepath)) {
-                return false;
-            }
-
-            using (StreamWriter writer = File.CreateText(filepath)) {
+            using (JsonWriter writer = new JsonTextWriter(File.CreateText(filepath))) {
                 JsonSerializer s = new JsonSerializer();
 
                 try {

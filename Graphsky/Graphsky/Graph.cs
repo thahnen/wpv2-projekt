@@ -1,23 +1,31 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 
 namespace Graphsky {
-    /// Output structure for Graph
+    /// Output structure for Graph (resembles input)
     public struct OGraph {
-        int width;
-        int height;
+        public int width;
+        public int height;
 
-        ONode[] nodes;
-        bool[,] adjacency;
+        public object[] nodes;
+        public bool[,] adjacency;
 
         public OGraph(ref Graph given) {
             given.getExtent().Unpack(out this.width, out this.height);
 
-            this.nodes = new ONode[given.nodes.Length];
-            for (int i = 0; i < given.nodes.Length; i++) {
-                this.nodes[i] = new ONode(ref given.nodes[i]);
+            this.nodes = new object[given.nodes.Length];
+            for (int i = 0; i < this.nodes.Length; i++) {
+                int ux, uy;
+                given.nodes[i].getPosition().Unpack(out ux, out uy);
+
+                this.nodes[i] = new {
+                    id = given.nodes[i].id,
+                    coords = new {
+                        ux = ux,
+                        uy = uy
+                    }
+                };
             }
 
             this.adjacency = given.edges;
@@ -32,7 +40,7 @@ namespace Graphsky {
         public Node first { get; private set; }
         public Node last { get; private set; }
 
-        // First index equals node from which arrow points
+        // First index equals node where arrow points from
         // Second index equals node where arrow points to
         public readonly bool[,] edges;
 
@@ -40,15 +48,15 @@ namespace Graphsky {
         private int? height;
 
 
-        public Graph(Node[] nodes_, int[][] adj_mat) {
-            nodes = nodes_;
+        public Graph(Node[] Nodes, int[][] Edges) {
+            nodes = Nodes;
             Array.Sort(nodes, delegate (Node a, Node b) {
                 return a.id.CompareTo(b.id);
             });
 
             edges = new bool[nodes.Length, nodes.Length];
 
-            foreach (int[] pair in adj_mat) {
+            foreach (int[] pair in Edges) {
                 int idx_from = Array.FindIndex(nodes, delegate (Node a) {
                     return a.id == pair[0];
                 });
@@ -79,8 +87,6 @@ namespace Graphsky {
          *  Calculates uniforma coordinates for the given nodes
          *  
          *  @return             true, if there was no problem with the given nodes
-         *  
-         *  TODO: uniform coordinates not correct!
          */
         public bool calculateUniformCoordinates() {
             // find entry node (the one nobody points to)
@@ -176,6 +182,7 @@ namespace Graphsky {
             return idx;
         }
 
+
         /**
          *  Get the index of the first empty row ~ the index pointing to nobody
          *  
@@ -204,6 +211,7 @@ namespace Graphsky {
             return idx;
         }
 
+
         /**
          *  Gets the maximum number of parallel nodes
          *  
@@ -221,6 +229,7 @@ namespace Graphsky {
 
             return h;
         }
+
 
         /**
          *  Return the indizes of the nodes following the given node indizes
