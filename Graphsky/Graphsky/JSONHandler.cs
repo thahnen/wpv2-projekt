@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Newtonsoft.Json;
 
 
@@ -22,7 +23,7 @@ namespace Graphsky {
                 try {
                     input = (Graph)s.Deserialize(reader, typeof(Graph));
                     return true;
-                } catch (JsonException e) {
+                } catch (Exception e) {
                     return false;
                 }
             }
@@ -43,7 +44,7 @@ namespace Graphsky {
                 try {
                     s.Serialize(writer, new OGraph(ref output));
                     return true;
-                } catch (JsonException e) {
+                } catch (Exception e) {
                     return false;
                 }
             }

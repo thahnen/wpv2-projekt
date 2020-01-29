@@ -19,16 +19,16 @@ Läd einen pseudo-Graphen aus einer JSON-Datei, fügt den Knoten und Kanten unif
 Die Eingabe muss wie folgt aussehen:
 ```json
 {
-	"Nodes" : [
-		{"id_" : 1},
-		{"id_" : 2},
-		{"id_" : 3},
-		{"id_" : 4}
-	],
-	"Edges" : [
-		[1, 2], [1, 3],
-		[2, 4], [3, 4]
-	]
+    "Nodes" : [
+        {"id_" : 1},
+        {"id_" : 2},
+        {"id_" : 3},
+        {"id_" : 4}
+    ],
+    "Edges" : [
+        [1, 2], [1, 3],
+        [2, 4], [3, 4]
+    ]
 }
 ```
 
@@ -42,7 +42,7 @@ Ergebnis ist nach der Erstellung von universellen Koordinaten:
     "height" : 2,
     "nodes" : [
         {"id" : 1, "coords" : {"ux" : 0, "uy" : 0}},
-        {"id" : 2, "coords" : {"ux" : 1,"uy" : -1}},
+        {"id" : 2, "coords" : {"ux" : 1, "uy" : -1}},
         {"id" : 3, "coords" : {"ux" : 1, "uy" : 1}},
         {"id" : 4, "coords" : {"ux" : 2, "uy" : 0}}
     ],
