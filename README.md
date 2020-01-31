@@ -56,12 +56,11 @@ Ergebnis ist nach der Erstellung von universellen Koordinaten:
 ```
 
 Dabei gibt "width" die Breite des Graphen an, "height" die Höhe.
-"nodes" nach wie vor die Knoten, allerdings diesmal mit universellen X- und Y-Koordinaten.
-Anstelle der Liste der Kanten gibt es nun eine Adjazenzmatrix, die Zeile gibt Start an, Spalte das Ziel.
-Dabei ist der Index in der Liste gleich dem Index in "nodes".
+"nodes" nach wie vor die Knoten, allerdings diesmal mit universellen X- und Y-Koordinaten und der Id nach sortiert.
+Anstelle der Liste der Kanten gibt es nun eine Adjazenzmatrix, die Zeile gibt Start an, Spalte das Ziel der Kante.
+Dabei ist der gegebene Index in der Liste gleich dem Index in "nodes".
 
 ---
 
 ## TODO:
 * Pfeile zeichnen von A -> B
-* Nodes werden als Quadrate mit Id in der Mitte angezeigt 

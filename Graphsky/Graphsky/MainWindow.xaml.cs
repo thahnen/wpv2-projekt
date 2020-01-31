@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 using Microsoft.Win32;
@@ -16,12 +17,13 @@ namespace Graphsky {
         public MainWindow() {
             InitializeComponent();
 
-            // Set graph default value
+            // Set default values
             graph = null;
             calculated = false;
         }
 
 
+        #region Button event handler
         /**
          *  Button handler for loading a graph from a file
          */
@@ -47,6 +49,7 @@ namespace Graphsky {
                     // Disable save button
                     btnSaveGraph.IsEnabled = false;
 
+                    // Set uniform coordinates calculated to false
                     calculated = false;
 
                     return;
@@ -100,6 +103,7 @@ namespace Graphsky {
                 // Enable button only if calculation was successfull!
                 btnSaveGraph.IsEnabled = true;
 
+                // Set uniform coordinates calculated to true
                 calculated = true;
 
                 return;
@@ -157,8 +161,10 @@ namespace Graphsky {
                 MessageBoxOptions.ServiceNotification
             );
         }
+        #endregion
 
 
+        #region Window event handler
         /**
          *  Handler for when window is resized, redraws the graph
          */
@@ -178,6 +184,7 @@ namespace Graphsky {
             // Draw edges (including arrow to first, from last to end)
             drawEdges(graph.nodes, graph.edges);
         }
+        #endregion
 
 
         /**
@@ -194,23 +201,25 @@ namespace Graphsky {
         }
 
 
+        #region Drawing functions
         /**
          *  Draws all nodes using the graph width + height to calculate the exact position
          *  
          *  @param nodes        list of graph nodes
+         *  @param size         element size, defaults to 20
          */
-        private void drawNodes(Node[] nodes) {
+        private void drawNodes(Node[] nodes, int size = 20) {
             int cvs_height = (int)cvsWhiteboard.ActualHeight;
 
             foreach (Node n in nodes) {
                 int x, y;
                 n.getPosition().Unpack(out x, out y);
 
-                Ellipse e = new Ellipse {
-                    Stroke = System.Windows.Media.Brushes.Black,
-                    Fill = System.Windows.Media.Brushes.Black,
-                    Width = 10,
-                    Height = 10
+                Rectangle e = new Rectangle {
+                    Stroke = Brushes.Black,
+                    Fill = Brushes.Black,
+                    Width = size,
+                    Height = size
                 };
 
                 int offset_width = (int)(e.Width * 0.5);
@@ -224,6 +233,29 @@ namespace Graphsky {
                 Canvas.SetTop(e, cvs_height / 2         // distance from top, equals x axis
                                     + y * (int)step_y   // distance from x axis
                                     - offset_height);   // offset due to ellipse offsets y coordinate by height
+
+
+                TextBlock t = new TextBlock {
+                    FontSize = size - 2,
+                    TextAlignment = TextAlignment.Center,
+                    Foreground = Brushes.White,
+                    Background = Brushes.Black,
+                    Text = n.id.ToString(),
+                    Width = size,
+                    Height = size
+                };
+
+                offset_width = (int)(t.Width * 0.5);
+                offset_height = (int)(t.Height * 0.5);
+
+                cvsWhiteboard.Children.Add(t);
+                Canvas.SetLeft(t, (int)step_x / 2
+                                    + x * (int)step_x
+                                    - offset_width);
+
+                Canvas.SetTop(t, cvs_height / 2
+                                    + y * (int)step_y
+                                    - offset_height);
             }
         }
 
@@ -233,8 +265,9 @@ namespace Graphsky {
          *  
          *  @param nodes        list of nodes, necessary for edge coordinates
          *  @param adjacency    the adjacency matrix for the edges
+         *  @param size         element size, defaults to 20
          */
-        private void drawEdges(Node[] nodes, bool[,] adjacency) {
+        private void drawEdges(Node[] nodes, bool[,] adjacency, int size = 20) {
             int cvs_height = (int)cvsWhiteboard.ActualHeight;
 
             for (int i = 0; i < adjacency.GetLength(0); i++) {
@@ -247,15 +280,17 @@ namespace Graphsky {
                         nodes[j].getPosition().Unpack(out x2, out y2);
 
                         Line l = new Line {
-                            Stroke = System.Windows.Media.Brushes.Black,
+                            Stroke = Brushes.Black,
                             StrokeThickness = 2,
                             X1 = (int)step_x / 2    // distance from left, equals y axis
-                                + x1 * (int)step_x, // distance from y axis
+                                + x1 * (int)step_x  // distance from y axis
+                                + size / 2,         // equals node based offset
                             Y1 = cvs_height / 2     // distance from top, equals x axis
                                 + y1 * (int)step_y, // distance from x axis
 
                             X2 =(int) step_x / 2    // distance from left, equals y axis
-                                + x2 * (int)step_x, // distance from y axis
+                                + x2 * (int)step_x  // distance from y axis
+                                - size / 2,         // equals node based offset
                             Y2 = cvs_height / 2     // distance from top, equals x axis
                                 + y2 * (int)step_y  // distance from x axis
                         };
@@ -270,24 +305,30 @@ namespace Graphsky {
             graph.first.getPosition().Unpack(out x, out y);
 
             cvsWhiteboard.Children.Add(new Line {
-                Stroke = System.Windows.Media.Brushes.Black,
+                Stroke = Brushes.Black,
                 StrokeThickness = 2,
                 X1 = (int)step_x / 4,
                 Y1 = cvs_height / 2,
-                X2 = (int)step_x / 2 + x * (int)step_x,
+                X2 = (int)step_x / 2
+                        + x * (int)step_x
+                        - size / 2,
                 Y2 = cvs_height / 2
             });
 
             // Draw ending (from last node)
             graph.last.getPosition().Unpack(out x, out y);
             cvsWhiteboard.Children.Add(new Line {
-                Stroke = System.Windows.Media.Brushes.Black,
+                Stroke = Brushes.Black,
                 StrokeThickness = 2,
-                X1 = (int)step_x / 2 + x * (int)step_x,
+                X1 = (int)step_x / 2
+                        + x * (int)step_x
+                        + size / 2,
                 Y1 = cvs_height / 2,
-                X2 = 3 * (int)step_x / 4 + x * (int)step_x,
+                X2 = 3 * (int)step_x / 4
+                        + x * (int)step_x,
                 Y2 = cvs_height / 2
             });
         }
+        #endregion
     }
 }
