@@ -8,10 +8,10 @@ using Microsoft.Win32;
 namespace Graphsky {
     /// Interaktionslogik für MainWindow.xaml
     public partial class MainWindow : Window {
-        string path;            // path to loaded file
-        private Graph graph;    // graph created from loaded file
-        int? step_x, step_y;    // step size of points, calculated using graph/ canvas size
-        bool calculated;        // indicates that step size was calculated (otherwise problems with recalculating)
+        private string path;            // path to loaded file
+        private Graph graph;            // graph created from loaded file
+        private int? step_x, step_y;    // step size of points, calculated using graph/ canvas size
+        private bool calculated;        // indicates that step size was calculated (otherwise problems with recalculating)
 
 
         public MainWindow() {
@@ -81,7 +81,7 @@ namespace Graphsky {
                 return;
             }
 
-            if (graph.calculateUniformCoordinates()) {
+            if (graph.CalculateUniformCoordinates()) {
                 // Show message box that uniform coordinates where calculated!
                 MessageBox.Show(
                     "Uniform coordinates where calculated!",
@@ -91,14 +91,14 @@ namespace Graphsky {
                 );
 
                 // Calculate step size based on given graph/ canvas size
-                calculateStepSize(out this.step_x, out this.step_y);
+                CalculateStepSize(out this.step_x, out this.step_y);
 
                 // Clear canvas
                 cvsWhiteboard.Children.Clear();
                 // Draw nodes
-                drawNodes(graph.nodes);
+                DrawNodes(graph.Nodes);
                 // Draw edges (including arrow to first, from last to end)
-                drawEdges(graph.nodes, graph.edges);
+                DrawEdges(graph.Nodes, graph.Edges);
 
                 // Enable button only if calculation was successfull!
                 btnSaveGraph.IsEnabled = true;
@@ -175,14 +175,14 @@ namespace Graphsky {
             }
 
             // Recalculate node positioning
-            calculateStepSize(out step_x, out step_y);
+            CalculateStepSize(out step_x, out step_y);
 
             // Clear canvas
             cvsWhiteboard.Children.Clear();
             // Draw nodes
-            drawNodes(graph.nodes);
+            DrawNodes(graph.Nodes);
             // Draw edges (including arrow to first, from last to end)
-            drawEdges(graph.nodes, graph.edges);
+            DrawEdges(graph.Nodes, graph.Edges);
         }
         #endregion
 
@@ -192,9 +192,9 @@ namespace Graphsky {
          *  
          *  @param step_x       where to store 
          */
-        private void calculateStepSize(out int? step_x, out int? step_y) {
+        private void CalculateStepSize(out int? step_x, out int? step_y) {
             int graph_width, graph_height;
-            graph.getExtent().Unpack(out graph_width, out graph_height);
+            graph.GetExtent().Unpack(out graph_width, out graph_height);
 
             step_x = (int)cvsWhiteboard.ActualWidth / graph_width;
             step_y = (int)cvsWhiteboard.ActualHeight / (graph_height + 2);
@@ -208,12 +208,12 @@ namespace Graphsky {
          *  @param nodes        list of graph nodes
          *  @param size         element size, defaults to 20
          */
-        private void drawNodes(Node[] nodes, int size = 20) {
+        private void DrawNodes(Node[] nodes, int size = 20) {
             int cvs_height = (int)cvsWhiteboard.ActualHeight;
 
             foreach (Node n in nodes) {
                 int x, y;
-                n.getPosition().Unpack(out x, out y);
+                n.GetPosition().Unpack(out x, out y);
 
                 Rectangle e = new Rectangle {
                     Stroke = Brushes.Black,
@@ -240,7 +240,7 @@ namespace Graphsky {
                     TextAlignment = TextAlignment.Center,
                     Foreground = Brushes.White,
                     Background = Brushes.Black,
-                    Text = n.id.ToString(),
+                    Text = n.Id.ToString(),
                     Width = size,
                     Height = size
                 };
@@ -267,17 +267,17 @@ namespace Graphsky {
          *  @param adjacency    the adjacency matrix for the edges
          *  @param size         element size, defaults to 20
          */
-        private void drawEdges(Node[] nodes, bool[,] adjacency, int size = 20) {
+        private void DrawEdges(Node[] nodes, bool[,] adjacency, int size = 20) {
             int cvs_height = (int)cvsWhiteboard.ActualHeight;
 
             for (int i = 0; i < adjacency.GetLength(0); i++) {
                 int x1, y1;
-                nodes[i].getPosition().Unpack(out x1, out y1);
+                nodes[i].GetPosition().Unpack(out x1, out y1);
 
                 for (int j = 0; j < adjacency.GetLength(1); j++) {
                     if (adjacency[i, j]) {
                         int x2, y2;
-                        nodes[j].getPosition().Unpack(out x2, out y2);
+                        nodes[j].GetPosition().Unpack(out x2, out y2);
 
                         Line l = new Line {
                             Stroke = Brushes.Black,
@@ -302,7 +302,7 @@ namespace Graphsky {
 
             // Draw start (to first node)
             int x, y;
-            graph.first.getPosition().Unpack(out x, out y);
+            graph.First.GetPosition().Unpack(out x, out y);
 
             cvsWhiteboard.Children.Add(new Line {
                 Stroke = Brushes.Black,
@@ -316,7 +316,7 @@ namespace Graphsky {
             });
 
             // Draw ending (from last node)
-            graph.last.getPosition().Unpack(out x, out y);
+            graph.Last.GetPosition().Unpack(out x, out y);
             cvsWhiteboard.Children.Add(new Line {
                 Stroke = Brushes.Black,
                 StrokeThickness = 2,

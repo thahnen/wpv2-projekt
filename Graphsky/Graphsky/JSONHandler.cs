@@ -23,7 +23,7 @@ namespace Graphsky {
                 try {
                     input = (Graph)s.Deserialize(reader, typeof(Graph));
                     return true;
-                } catch (Exception e) {
+                } catch (Exception) {
                     return false;
                 }
             }
@@ -44,7 +44,7 @@ namespace Graphsky {
                 try {
                     s.Serialize(writer, new OGraph(ref output));
                     return true;
-                } catch (Exception e) {
+                } catch (Exception) {
                     return false;
                 }
             }

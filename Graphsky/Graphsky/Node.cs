@@ -4,12 +4,12 @@
 namespace Graphsky {
     /// Stores information about a given node
     public class Node {
-        public readonly int id;
+        public readonly int Id;
         private int? x, y;
 
 
         public Node(int id_) {
-            id = id_;
+            Id = id_;
             x = null;
             y = null;
         }
@@ -21,7 +21,7 @@ namespace Graphsky {
          *  @param x_           value for x
          *  @param y_           value for y
          */
-        public void setPosition(int x_, int y_) {
+        public void SetPosition(int x_, int y_) {
             x = x_;
             y = y_;
         }
@@ -32,7 +32,7 @@ namespace Graphsky {
          *  
          *  @return             true if position set, false otherwise
          */
-        public bool checkPosition() {
+        public bool CheckPosition() {
             return (x.HasValue & y.HasValue);
         }
 
@@ -42,7 +42,7 @@ namespace Graphsky {
          *  
          *  @return             tuple containing x and y in that order
          */
-        public Tuple<int, int> getPosition() {
+        public Tuple<int, int> GetPosition() {
             return new Tuple<int, int>((int)x, (int)y);
         }
     }
