@@ -5,11 +5,11 @@ using System.Collections.Generic;
 namespace Graphsky {
     /// Output structure for Graph (resembles input)
     public struct OGraph {
-        public int Width;
-        public int Height;
+        public readonly int Width;
+        public readonly int Height;
 
-        public object[] Nodes;
-        public bool[,] Adjacency;
+        public readonly object[] Nodes;
+        public readonly bool[,] Adjacency;
 
         public OGraph(ref Graph given) {
             given.GetExtent().Unpack(out Width, out Height);
@@ -20,10 +20,10 @@ namespace Graphsky {
                 given.Nodes[i].GetPosition().Unpack(out ux, out uy);
 
                 Nodes[i] = new {
-                    id = given.Nodes[i].Id,
-                    coords = new {
-                        ux = ux,
-                        uy = uy
+                    Id = given.Nodes[i].Id,
+                    Coords = new {
+                        uX = ux,
+                        uY = uy
                     }
                 };
             }
@@ -48,6 +48,9 @@ namespace Graphsky {
         private int? height;
 
 
+        /**
+         *  Constructor, parameters are called "Nodes" and "Edges" based on the JSON-field!
+         */
         public Graph(Node[] Nodes, int[][] Edges) {
             this.Nodes = Nodes;
             Array.Sort(this.Nodes, delegate (Node a, Node b) {

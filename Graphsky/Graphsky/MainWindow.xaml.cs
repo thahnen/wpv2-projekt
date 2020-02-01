@@ -32,7 +32,7 @@ namespace Graphsky {
             if (dialog.ShowDialog() == true) {
                 path = dialog.FileName;
 
-                if (JSONHandler.loadFromFile(path, ref graph)) {
+                if (JSONHandler.LoadFromFile(path, ref graph)) {
                     // Clear canvas
                     cvsWhiteboard.Children.Clear();
 
@@ -139,7 +139,7 @@ namespace Graphsky {
                 output_path += "." + parts[i];
             }
 
-            if (JSONHandler.saveGraphToFile(output_path, ref this.graph)) {
+            if (JSONHandler.SaveGraphToFile(output_path, ref this.graph)) {
                 // Show message box that file was saved correctly!
                 MessageBox.Show(
                     $"File {path} saved to {output_path}!",

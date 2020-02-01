@@ -38,15 +38,15 @@ Dabei gibt "Nodes" die Knoten im Graphen an und "Edges" eine Liste von Kanten (S
 Ergebnis ist nach der Erstellung von universellen Koordinaten:
 ```json
 {
-    "width" : 3,
-    "height" : 2,
-    "nodes" : [
-        {"id" : 1, "coords" : {"ux" : 0, "uy" : 0}},
-        {"id" : 2, "coords" : {"ux" : 1, "uy" : -1}},
-        {"id" : 3, "coords" : {"ux" : 1, "uy" : 1}},
-        {"id" : 4, "coords" : {"ux" : 2, "uy" : 0}}
+    "Width" : 3,
+    "Height" : 2,
+    "Nodes" : [
+        {"Id" : 1, "Coords" : {"uX" : 0, "uY" : 0}},
+        {"Id" : 2, "Coords" : {"uX" : 1, "uY" : -1}},
+        {"Id" : 3, "Coords" : {"uX" : 1, "uY" : 1}},
+        {"Id" : 4, "Coords" : {"uX" : 2, "uY" : 0}}
     ],
-    "adjacency" : [
+    "Adjacency" : [
         [false, true, true, false],
         [false, false, false, true],
         [false, false, false, true],
@@ -55,12 +55,13 @@ Ergebnis ist nach der Erstellung von universellen Koordinaten:
 }
 ```
 
-Dabei gibt "width" die Breite des Graphen an, "height" die Höhe.
-"nodes" nach wie vor die Knoten, allerdings diesmal mit universellen X- und Y-Koordinaten und der Id nach sortiert.
+Dabei gibt "Width" die Breite des Graphen an, "Height" die maximale Höhe.
+"Nodes" gibt nach wie vor die Knoten an, allerdings diesmal mit universellen X- und Y-Koordinaten und der Id nach sortiert.
 Anstelle der Liste der Kanten gibt es nun eine Adjazenzmatrix, die Zeile gibt Start an, Spalte das Ziel der Kante.
-Dabei ist der gegebene Index in der Liste gleich dem Index in "nodes".
+Dabei ist der gegebene Index in der Liste gleich dem Index in "Nodes".
 
 ---
 
 ## TODO:
 * Pfeile zeichnen von A -> B
+* Richtigere Anordnung der Knoten

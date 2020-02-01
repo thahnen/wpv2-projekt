@@ -8,22 +8,23 @@ namespace Graphsky {
         private int? x, y;
 
 
+        /**
+         *  Constructor, parameter is called "id_" based on the JSON-field!
+         */
         public Node(int id_) {
             Id = id_;
-            x = null;
-            y = null;
         }
 
 
         /**
          *  Sets the uniform coordinates
          *  
-         *  @param x_           value for x
-         *  @param y_           value for y
+         *  @param x            value for x
+         *  @param y            value for y
          */
-        public void SetPosition(int x_, int y_) {
-            x = x_;
-            y = y_;
+        public void SetPosition(int x, int y) {
+            this.x = x;
+            this.y = y;
         }
 
 

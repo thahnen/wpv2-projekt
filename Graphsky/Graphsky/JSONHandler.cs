@@ -12,7 +12,7 @@ namespace Graphsky {
          *  @param input        where to store the loaded graph
          *  @return             true if loading was sucessfull
          */
-        public static bool loadFromFile(string filePath, ref Graph input) {
+        public static bool LoadFromFile(string filePath, ref Graph input) {
             if (!File.Exists(filePath)) {
                 return false;
             }
@@ -37,7 +37,7 @@ namespace Graphsky {
          *  @param output       which graph should be written to file
          *  @return             true if saving was sucessfull
          */
-        public static bool saveGraphToFile(string filepath, ref Graph output) {
+        public static bool SaveGraphToFile(string filepath, ref Graph output) {
             using (JsonWriter writer = new JsonTextWriter(File.CreateText(filepath))) {
                 JsonSerializer s = new JsonSerializer();
 
